@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Next-Level Skill Diagnostic — Sewing Boss</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bold-blue:#1F2ADE;
+    --lavender:#FCB8D9;
+    --emerald:#00DF82;
+    --tangerine:#FF4400;
+    --warm-white:#F7F5F2;
+    --stone:#E6E1DA;
+    --ink:#221F2B;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--warm-white);
+    color:var(--ink);
+    font-family:'Quicksand',sans-serif;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:32px 16px 64px;
+  }
+  .app{
+    width:100%;
+    max-width:680px;
+  }
+
+  /* --- Stitch progress: signature element --- */
+  .stitch-track{
+    position:relative;
+    height:20px;
+    margin-bottom:36px;
+  }
+  .stitch-track svg{ width:100%; height:100%; display:block; overflow:visible; }
+  .stitch-base{
+    stroke:var(--stone);
+    stroke-width:2;
+    fill:none;
+  }
+  .stitch-fill{
+    stroke:var(--bold-blue);
+    stroke-width:2;
+    fill:none;
+    stroke-dasharray:8 6;
+    transition:stroke-dashoffset 0.5s ease;
+  }
+  .stitch-label{
+    font-family:'Quicksand',sans-serif;
+    font-weight:600;
+    font-size:12px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--bold-blue);
+    margin-bottom:8px;
+    display:block;
+  }
+
+  header.intro{ margin-bottom:40px; }
+  .eyebrow{
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--tangerine);
+    margin-bottom:10px;
+  }
+  h1{
+    font-family:'Fraunces',serif;
+    font-optical-sizing:auto;
+    font-weight:500;
+    font-size:clamp(28px,5vw,40px);
+    line-height:1.1;
+    margin:0 0 16px;
+    color:var(--ink);
+  }
+  .intro p{
+    font-size:16px;
+    line-height:1.6;
+    color:#4A4658;
+    max-width:56ch;
+  }
+  .intro-rules{
+    margin-top:20px;
+    padding:18px 20px;
+    background:#fff;
+    border:1px solid var(--stone);
+    border-radius:4px;
+  }
+  .intro-rules ol{ margin:0; padding-left:18px; }
+  .intro-rules li{ font-size:14px; line-height:1.7; color:#4A4658; }
+
+  .start-btn, .option, .primary-btn, .restart-btn{
+    font-family:'Quicksand',sans-serif;
+    cursor:pointer;
+  }
+  .start-btn, .primary-btn{
+    display:inline-block;
+    background:var(--bold-blue);
+    color:#fff;
+    border:none;
+    padding:14px 28px;
+    border-radius:4px;
+    font-size:15px;
+    font-weight:700;
+    letter-spacing:0.02em;
+  }
+  .start-btn:hover, .primary-btn:hover{ background:#161ea8; }
+
+  .card{
+    background:#fff;
+    border:1px solid var(--stone);
+    border-radius:4px;
+    padding:32px;
+  }
+  .q-number{
+    font-family:'Fraunces',serif;
+    font-size:14px;
+    font-weight:600;
+    color:var(--bold-blue);
+    margin-bottom:6px;
+    letter-spacing:0.02em;
+  }
+  .q-title{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:22px;
+    line-height:1.3;
+    margin:0 0 8px;
+  }
+  .q-scenario{
+    font-size:15px;
+    line-height:1.6;
+    color:#4A4658;
+    margin-bottom:24px;
+  }
+  .options{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .option{
+    text-align:left;
+    background:var(--warm-white);
+    border:1px solid var(--stone);
+    border-radius:4px;
+    padding:16px 18px;
+    font-size:15px;
+    line-height:1.5;
+    color:var(--ink);
+    display:flex;
+    gap:12px;
+    transition:border-color 0.15s ease, background 0.15s ease;
+  }
+  .option:hover{
+    border-color:var(--bold-blue);
+    background:#fff;
+  }
+  .option .letter{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    color:var(--bold-blue);
+    flex-shrink:0;
+  }
+
+  .nav-row{
+    margin-top:20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .back-link{
+    font-size:13px;
+    color:#6B6779;
+    background:none;
+    border:none;
+    cursor:pointer;
+    text-decoration:underline;
+    font-family:'Quicksand',sans-serif;
+  }
+  .back-link:disabled{ visibility:hidden; }
+
+  /* Result screen */
+  .result-card{
+    background:#fff;
+    border:1px solid var(--stone);
+    border-radius:4px;
+    padding:36px 32px;
+  }
+  .result-eyebrow{
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--emerald);
+    margin-bottom:8px;
+  }
+  .result-title{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:clamp(26px,5vw,34px);
+    margin:0 0 18px;
+  }
+  .result-body p{
+    font-size:15.5px;
+    line-height:1.7;
+    color:#3A3645;
+    margin:0 0 14px;
+  }
+  .next-step{
+    margin-top:22px;
+    padding:20px 22px;
+    background:var(--warm-white);
+    border-left:3px solid var(--tangerine);
+    border-radius:2px;
+  }
+  .next-step h3{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:15px;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    margin:0 0 8px;
+    color:var(--ink);
+  }
+  .next-step p{
+    font-size:15px;
+    line-height:1.6;
+    color:#3A3645;
+    margin:0;
+  }
+  .cta-block{
+    margin-top:28px;
+    padding-top:24px;
+    border-top:1px solid var(--stone);
+  }
+  .cta-block p{
+    font-size:14.5px;
+    line-height:1.6;
+    color:#4A4658;
+    margin:0 0 16px;
+  }
+  .cta-row{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .restart-btn{
+    background:none;
+    border:1px solid var(--stone);
+    padding:14px 24px;
+    border-radius:4px;
+    font-size:14px;
+    font-weight:600;
+    color:#4A4658;
+  }
+  .restart-btn:hover{ border-color:var(--bold-blue); color:var(--bold-blue); }
+
+  .tally{
+    display:flex;
+    gap:16px;
+    margin-top:20px;
+    font-size:13px;
+    color:#6B6779;
+  }
+  .tally span b{ color:var(--ink); }
+
+  footer{
+    margin-top:48px;
+    text-align:center;
+    font-size:12.5px;
+    color:#8A8595;
+  }
+  footer a{ color:#8A8595; }
+
+  .hidden{ display:none; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="stitch-track" id="stitchTrack">
+    <span class="stitch-label" id="stitchLabel">Getting started</span>
+    <svg viewBox="0 0 100 10" preserveAspectRatio="none">
+      <line class="stitch-base" x1="0" y1="5" x2="100" y2="5"/>
+      <line class="stitch-fill" id="stitchFill" x1="0" y1="5" x2="100" y2="5" stroke-dashoffset="100"/>
+    </svg>
+  </div>
+
+  <!-- INTRO -->
+  <section id="intro">
+    <header class="intro">
+      <div class="eyebrow">A Reflection for Thoughtful Sewists</div>
+      <h1>The Next-Level Skill Diagnostic</h1>
+      <p>You're past the beginner stage — no more tote bags or elastic-waist shorts. But your sewing still isn't quite where you want it to be. This diagnostic pinpoints what's holding you back and what to do next. It isn't about how long you've been sewing — it's about how you think when you hit a technical challenge.</p>
+      <div class="intro-rules">
+        <ol>
+          <li>Read each scenario.</li>
+          <li>Choose the response that feels most like you.</li>
+          <li>Get your result after six questions.</li>
+        </ol>
+      </div>
+    </header>
+    <button class="start-btn" id="startBtn">Start the diagnostic</button>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz" class="hidden">
+    <div class="card">
+      <div class="q-number" id="qNumber">Question 1 of 6</div>
+      <h2 class="q-title" id="qTitle"></h2>
+      <p class="q-scenario" id="qScenario"></p>
+      <div class="options" id="qOptions"></div>
+    </div>
+    <div class="nav-row">
+      <button class="back-link" id="backBtn">Back</button>
+      <div class="tally">
+        <span>A <b id="tallyA">0</b></span>
+        <span>B <b id="tallyB">0</b></span>
+        <span>C <b id="tallyC">0</b></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULT -->
+  <section id="result" class="hidden">
+    <div class="result-card">
+      <div class="result-eyebrow" id="resultEyebrow">Your Result</div>
+      <h2 class="result-title" id="resultTitle"></h2>
+      <div class="result-body" id="resultBody"></div>
+      <div class="next-step">
+        <h3>Your Next Step</h3>
+        <p id="resultNextStep"></p>
+      </div>
+      <div class="cta-block">
+        <p>Join the Sewing Boss Learning Lab for support with the skills you've just uncovered — tutorials, questions answered, and real-time help on your own garments.</p>
+        <div class="cta-row">
+          <a class="primary-btn" href="https://www.skool.com/sewing-boss-learning-lab-6449/about" target="_blank" rel="noopener">Join the Learning Lab</a>
+          <button class="restart-btn" id="restartBtn">Take it again</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Sewing Boss Squad — hello@sewingbosssquad.com.au
+  </footer>
+</div>
+
+<script>
+const questions = [
+  {
+    title: "The Toile Stage",
+    scenario: "You've just sewn your first toile in calico. The bodice sits perfectly, but there's pulling across the upper arm when you reach forward. Your next move is:",
+    options: [
+      { letter:"A", text:"Start pinning and slashing the calico directly to find more room." },
+      { letter:"B", text:"Check a drafting book (like Metric Pattern Cutting) to identify where to adjust for movement." },
+      { letter:"C", text:"Consider whether the final fabric's weave or hand will have enough natural give to ignore the pulling." }
+    ]
+  },
+  {
+    title: "The Finishing Choice",
+    scenario: "You're finally using that fabric you've been saving. The instructions suggest a simple neckline facing, but you want a more professional result. You decide to:",
+    options: [
+      { letter:"A", text:"Research an industry-standard bagged-out lining or bias-bound finish for a cleaner internal finish." },
+      { letter:"B", text:"Prick-stitch the facing by hand to ensure it never rolls to the outside." },
+      { letter:"C", text:"Draft a custom facing slightly smaller than the neckline to account for the turn of cloth." }
+    ]
+  },
+  {
+    title: "The Fabric Choice",
+    scenario: "You've chosen a softer, more fluid fabric than the pattern recommends, and it isn't behaving quite as expected. Your instinct is to:",
+    options: [
+      { letter:"A", text:"Stabilise the key areas early so the fabric keeps its shape as you sew." },
+      { letter:"B", text:"Pause and think about how this fabric might change the way the garment hangs and moves." },
+      { letter:"C", text:"Slow everything down and handle the fabric more carefully as you sew." }
+    ]
+  },
+  {
+    title: 'The "Inside-Out" Ambition',
+    scenario: "When you look at a garment from a luxury brand, what's the first thing you find yourself inspecting?",
+    options: [
+      { letter:"A", text:"The way the sleeve sits in the armscye without a single pucker or pleat." },
+      { letter:"B", text:"The specific pattern lines — how they moved a dart or changed a seam to create that silhouette." },
+      { letter:"C", text:"The topstitching, and whether the buttons are perfectly aligned and shanked." }
+    ]
+  },
+  {
+    title: "The Following vs Interpreting Moment",
+    scenario: "You're following the pattern instructions and reach a step where you pause and think, \"Is this the best way to do this?\" Your instinct is to:",
+    options: [
+      { letter:"A", text:"Look for a more refined or traditional method for that step." },
+      { letter:"B", text:"Try a couple of options on scrap fabric before continuing." },
+      { letter:"C", text:"Consider whether the result might be affected by how the garment fits your body." }
+    ]
+  },
+  {
+    title: "The Growing Edge",
+    scenario: "If you could spend a Saturday afternoon with an experienced industry professional, what would feel like the biggest unlock for your sewing?",
+    options: [
+      { letter:"A", text:"Understanding how to read drag lines and translate them back to the paper pattern for a better fit." },
+      { letter:"B", text:"Learning to manipulate a basic bodice block into three different necklines and closures without hacking the pieces." },
+      { letter:"C", text:"Mastering a smooth industrial-style invisible zip and notched collar." }
+    ]
+  }
+];
+
+const results = {
+  A: {
+    eyebrow: "Mostly A's",
+    title: "The Fit Refiner",
+    body: [
+      "You've moved well beyond the \"sew and hope\" stage. You've probably stood in front of the mirror thinking: the waist is right, so why does the back feel tight? Or: this should fit, but something's off.",
+      "You know standard sizing isn't the answer, but random tweaks don't interest you either. You want your clothes to feel like they were actually made for your body."
+    ],
+    nextStep: "Understand how a flat pattern becomes a three-dimensional garment. You're ready to use toiles to spot what's really happening and make calm, considered adjustments that bring everything back into balance."
+  },
+  B: {
+    eyebrow: "Mostly B's",
+    title: "The Pattern Translator",
+    body: [
+      "You rarely follow a pattern without questioning it. You've likely caught yourself thinking: I love this, but I'd change the neckline. Or: why is this dart here?",
+      "You can imagine the garment you want, but you don't quite have the confidence to alter the pattern without fear of failure. You're not looking for shortcuts — you want to understand how it all works."
+    ],
+    nextStep: "Learn to read patterns more deeply so you can move seams, adjust shapes, and create garments that feel intentional, not improvised."
+  },
+  C: {
+    eyebrow: "Mostly C's",
+    title: "The Technique & Precision Builder",
+    body: [
+      "You notice the details, even the ones no one else sees — or you brush off the compliments when they come. You've probably unpicked something not because it was wrong, but because it wasn't quite right.",
+      "You care about how things sit, how they feel, and how they're finished on the inside. That matters to you."
+    ],
+    nextStep: "Refine your understanding of fabric and construction so everything feels more controlled and consistent — a set of techniques you can rely on, project after project."
+  }
+};
+
+let current = 0;
+let answers = [];
+let tally = { A:0, B:0, C:0 };
+
+const introEl = document.getElementById('intro');
+const quizEl = document.getElementById('quiz');
+const resultEl = document.getElementById('result');
+const startBtn = document.getElementById('startBtn');
+const backBtn = document.getElementById('backBtn');
+const restartBtn = document.getElementById('restartBtn');
+const stitchFill = document.getElementById('stitchFill');
+const stitchLabel = document.getElementById('stitchLabel');
+
+function updateStitch(step, total, label){
+  const pct = step / total;
+  const offset = 100 - (pct * 100);
+  stitchFill.setAttribute('stroke-dashoffset', offset);
+  stitchLabel.textContent = label;
+}
+
+function renderQuestion(){
+  const q = questions[current];
+  document.getElementById('qNumber').textContent = `Question ${current + 1} of ${questions.length}`;
+  document.getElementById('qTitle').textContent = q.title;
+  document.getElementById('qScenario').textContent = q.scenario;
+  const optionsEl = document.getElementById('qOptions');
+  optionsEl.innerHTML = '';
+  q.options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.innerHTML = `<span class="letter">${opt.letter})</span><span>${opt.text}</span>`;
+    btn.addEventListener('click', () => selectAnswer(opt.letter));
+    optionsEl.appendChild(btn);
+  });
+  backBtn.disabled = current === 0;
+  updateStitch(current, questions.length, `Question ${current + 1} of ${questions.length}`);
+  updateTallyDisplay();
+}
+
+function updateTallyDisplay(){
+  document.getElementById('tallyA').textContent = tally.A;
+  document.getElementById('tallyB').textContent = tally.B;
+  document.getElementById('tallyC').textContent = tally.C;
+}
+
+function selectAnswer(letter){
+  answers[current] = letter;
+  recalcTally();
+  if (current < questions.length - 1){
+    current++;
+    renderQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function recalcTally(){
+  tally = { A:0, B:0, C:0 };
+  answers.forEach(a => { if (a) tally[a]++; });
+}
+
+function showResult(){
+  quizEl.classList.add('hidden');
+  resultEl.classList.remove('hidden');
+  updateStitch(questions.length, questions.length, 'Result');
+
+  let winner = 'A';
+  if (tally.B > tally[winner]) winner = 'B';
+  if (tally.C > tally[winner]) winner = 'C';
+  // tie-break: keep earliest-decided leader by checking equal counts in order A,B,C already handled by strict > comparisons
+
+  const r = results[winner];
+  document.getElementById('resultEyebrow').textContent = r.eyebrow;
+  document.getElementById('resultTitle').textContent = r.title;
+  document.getElementById('resultBody').innerHTML = r.body.map(p => `<p>${p}</p>`).join('');
+  document.getElementById('resultNextStep').textContent = r.nextStep;
+}
+
+startBtn.addEventListener('click', () => {
+  introEl.classList.add('hidden');
+  quizEl.classList.remove('hidden');
+  renderQuestion();
+});
+
+backBtn.addEventListener('click', () => {
+  if (current > 0){
+    current--;
+    renderQuestion();
+  }
+});
+
+restartBtn.addEventListener('click', () => {
+  current = 0;
+  answers = [];
+  tally = { A:0, B:0, C:0 };
+  resultEl.classList.add('hidden');
+  introEl.classList.remove('hidden');
+  updateStitch(0, questions.length, 'Getting started');
+});
+</script>
+</body>
+</html>
